@@ -12,7 +12,9 @@ export default function MainPageCard(){
         </div>
        
         <div className="p-4 w-full bg-fuchsia-700 rounded-xl row-span-2 col-span-2 text-center">
-            <div className="text-2xl"><a href="/about"> About Me </a></div>            
+           {/* 
+           Reenable once good way to do about page is thought up
+           <div className="text-2xl"><a href="/about"> About Me </a></div> */}            
             <div className=" text-2xl"><a href="/skills">My Skills / Timeline </a></div>
             <div className=" text-2xl"><a href="/projects">Projects</a></div> 
         </div>
