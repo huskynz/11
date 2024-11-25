@@ -1,7 +1,7 @@
 import Links from "./Links"
 const PeterImage = "https://serv.husky.nz/public/peter.png"
 
-export default function Aboutme(){
+export default function MainPageCard(){
     return (
     <div className="grid grid-rows-3 grid-flow-col gap-4 px-4 py-4 leading-10">
         <div className="p-4 w-full bg-fuchsia-900 rounded-xl row-span-3"><img src={PeterImage} width={280} height={280}/></div>
