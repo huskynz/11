@@ -4,6 +4,8 @@ import { type Metadata } from "next";
 
 const MasterClassNames = "bg-gradient-to-b from-[#932adc] to-[#ee378b] text-white font-['Open_Sans'] min-h-screen"
 
+import PageWarning from "~/components/PageWarning"
+
 export const metadata: Metadata = {
   title: "HuskyNZ",
   description: "HuskyNZ",
@@ -15,8 +17,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={MasterClassNames}>
-      <body>{children}
+      <body>
+        <PageWarning />
+        {children}
       </body>
     </html>
   );
-}
+ }
