@@ -2,7 +2,7 @@ import "~/styles/globals.css";
 
 import { type Metadata } from "next";
 
-const MasterClassNames = "bg-gradient-to-b from-[#932adc] to-[#ee378b] text-white font-['Open_Sans']"
+const MasterClassNames = "bg-gradient-to-b from-[#932adc] to-[#ee378b] text-white font-['Open_Sans'] min-h-screen"
 
 export const metadata: Metadata = {
   title: "HuskyNZ",
