@@ -9,6 +9,7 @@ export default function Nav() {
   const navItems = [
     { name: "Home", href: "/" },
     { name: "Blog", href: "/blog" },
+    { name: "Timeline", href: "/timeline" },
     { name: "About", href: "#about", anchor: true },
     { name: "Contact", href: "#contact", anchor: true },
   ];
