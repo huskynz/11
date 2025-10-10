@@ -1,3 +1,5 @@
+
+import Link from "next/link";
 import Logo from './logo';
 
 export function NotFound() {
@@ -9,12 +11,12 @@ export function NotFound() {
       <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-xl mx-auto">
         Sorry, the page you are looking for does not exist or has been moved.
       </p>
-      <a
+      <Link
         href="/"
         className="inline-block px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
       >
         Go back home
-      </a>
+      </Link>
     </div>
     );
 }
