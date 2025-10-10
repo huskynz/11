@@ -4,43 +4,36 @@ export default function Socials() {
       name: "Email",
       text: "peter@husky.nz",
       href: "mailto:peter@husky.nz",
-      icon: "📧",
     },
     {
       name: "GitHub (Main)",
       text: "HuskyNZ",
       href: "https://github.com/HuskyNZ",
-      icon: "🐙",
     },
     {
       name: "GitHub (Personal)",
       text: "Husky-Devel",
       href: "https://github.com/husky-devel",
-      icon: "💻",
     },
     {
       name: "Twitch",
       text: "huskynzofficial",
       href: "https://hnz.li/twitch",
-      icon: "📺",
     },
     {
       name: "YouTube",
       text: "@huskynz",
       href: "https://hnz.li/youtube",
-      icon: "🎥",
     },
     {
       name: "Discord",
       text: "huskynzofficial",
       href: "https://discord.com",
-      icon: "💬",
     },
     {
       name: "Download CV",
       text: "Download",
       href: "https://serv.husky.nz/public/peter-cv-v7.pdf",
-      icon: "📄",
     },
   ];
 
@@ -62,7 +55,6 @@ export default function Socials() {
               rel="noopener noreferrer"
               className="flex items-center gap-4 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 border border-gray-200 dark:border-gray-700"
             >
-              <span className="text-4xl">{social.icon}</span>
               <div className="flex-1">
                 <div className="font-semibold text-gray-900 dark:text-white">
                   {social.name}
