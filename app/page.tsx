@@ -10,7 +10,7 @@ export default function Home() {
     <div className="min-h-screen">
       <Hero />
       <About />
-      <Timeline />
+
       <div className="py-12 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-800 dark:to-gray-900">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">
