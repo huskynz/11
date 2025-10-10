@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from "react";
 declare global {
   interface Window {
     turnstile?: {
-      render: (element: HTMLElement, options: any) => string;
+      render: (element: HTMLElement, options: Record<string, unknown>) => string;
       reset: (widgetId?: string) => void;
       remove: (widgetId?: string) => void;
     };
@@ -30,11 +30,20 @@ export default function Contact() {
       setTurnstileToken(token);
     };
 
+    // Check if script already exists
+    const existingScript = document.querySelector('script[src*="turnstile"]');
+    if (existingScript) {
+      return;
+    }
+
     // Load Turnstile script
     const script = document.createElement("script");
     script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
     script.async = true;
     script.defer = true;
+    script.onerror = () => {
+      console.warn("Failed to load Turnstile script");
+    };
     document.body.appendChild(script);
 
     return () => {
@@ -149,8 +158,15 @@ export default function Contact() {
               className="cf-turnstile"
               data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA"}
               data-callback="onTurnstileSuccess"
+              data-theme="auto"
             ></div>
           </div>
+          
+          {process.env.NODE_ENV === "development" && !turnstileToken && (
+            <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+              Note: Turnstile widget may not load in development. The form will still work.
+            </p>
+          )}
 
           <button
             type="submit"
