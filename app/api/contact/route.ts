@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     const { data, error } = await resend.emails.send({
-      from: "Contact Form <onboarding@resend.dev>", // Update this to your verified domain
+      from: "mcontact@send.husky.nz", // Update this to your verified domain
       to: ["peter@husky.nz"],
       replyTo: validatedData.email,
       subject: `New Contact Form Submission from ${validatedData.name}`,
