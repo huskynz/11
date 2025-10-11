@@ -101,19 +101,6 @@ const getCategoryColor = (category: string = 'technology') => {
   return colors[category as keyof typeof colors] || colors.technology;
 };
 
-// Helper function to get category icon
-const getCategoryIcon = (category: string = 'technology') => {
-  const icons = {
-    certification: '🏆',
-    technology: '⚡',
-    career: '💼',
-    project: '🚀',
-    infrastructure: '🏗️'
-  };
-  return icons[category as keyof typeof icons] || icons.technology;
-};
-
-
 export default function Timeline() {
   return (
     <section className="py-20 bg-white dark:bg-gray-900">
