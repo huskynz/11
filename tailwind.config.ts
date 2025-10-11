@@ -11,6 +11,15 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        huskyPink: {
+          DEFAULT: '#ff4fa3',
+        },
+        huskyPurple: {
+          DEFAULT: '#b84fff',
+        },
+        huskyBlue: {
+          DEFAULT: '#e3eafe', // much lighter blue for backgrounds
+        },
       },
     },
   },

@@ -31,11 +31,11 @@ export default async function BlogPost({
   const contentHtml = await markdownToHtml(post.content);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 py-20">
+  <div className="min-h-screen bg-white dark:bg-gray-900 py-20">
       <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <Link
           href="/blog"
-          className="text-blue-600 dark:text-blue-400 hover:underline mb-8 inline-block"
+          className="text-huskyBlue dark:text-huskyPink hover:underline mb-8 inline-block"
         >
           ← Back to Blog
         </Link>
@@ -57,7 +57,7 @@ export default async function BlogPost({
                 {post.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="px-2 py-1 bg-blue-600 dark:bg-blue-400 text-white text-xs rounded"
+                    className="px-2 py-1 bg-huskyPurple dark:bg-huskyPink text-white text-xs rounded"
                   >
                     {tag}
                   </span>
