@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function Hero() {
   return (
-  <section className="relative min-h-screen flex items-center justify-center bg-white dark:bg-gray-900">
+  <section className="relative min-h-screen flex items-center justify-center">
       <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="mb-8">
@@ -26,7 +26,7 @@ export default function Hero() {
         <div className="flex flex-wrap gap-4 justify-center">
           <a
             href="#contact"
-            className="px-8 py-4 bg-huskyPurple text-white rounded-lg font-semibold hover:bg-huskyPink transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            className="px-8 py-4 bg-huskyPurple text-white rounded-lg font-semibold hover:bg-huskyPink transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 content-center"
           >
             Let&apos;s Connect
           </a>
