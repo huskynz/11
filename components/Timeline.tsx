@@ -1,20 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
 interface TimelineEvent {
   year: string;
   events: string[];
+  category?: 'certification' | 'technology' | 'career' | 'project' | 'infrastructure';
 }
 
 const timeline: TimelineEvent[] = [
   {
     year: "2018",
     events: ["Deployed first Ubuntu 18.04 VM in Hyper-V"],
+    category: 'infrastructure'
   },
   {
     year: "2019",
     events: ["Moved to New Zealand"],
+    category: 'career'
   },
   {
     year: "2020",
@@ -26,6 +27,7 @@ const timeline: TimelineEvent[] = [
       "Started learning Linux",
       "Developed skills with Azure",
     ],
+    category: 'technology'
   },
   {
     year: "2021",
@@ -39,6 +41,7 @@ const timeline: TimelineEvent[] = [
       "Developed skills with the Microsoft 365 suite",
       "Developed skills with Intune and Windows Autopilot",
     ],
+    category: 'certification'
   },
   {
     year: "2022",
@@ -48,6 +51,7 @@ const timeline: TimelineEvent[] = [
       "Began learning AWS",
       "Migrated AD Domain from Azure to AWS",
     ],
+    category: 'technology'
   },
   {
     year: "2023",
@@ -58,6 +62,7 @@ const timeline: TimelineEvent[] = [
       "Started learning Node.js and TypeScript",
       "Began to learn more about Cloudflare",
     ],
+    category: 'certification'
   },
   {
     year: "2024",
@@ -70,6 +75,7 @@ const timeline: TimelineEvent[] = [
       "Bought a HP DL380 G8 server",
       "ESXI + Vcenter 8",
     ],
+    category: 'project'
   },
   {
     year: "2025",
@@ -79,78 +85,79 @@ const timeline: TimelineEvent[] = [
       "Setup A SAN in my homelab to Learn and Understand network storage",
       "Setup Citrix Virtual Apps and Desktop and intrgrated with ESXi and Vcenter to auto provisioning and deployment of VDI vm's",
     ],
+    category: 'infrastructure'
   },
 ];
 
+// Helper function to get category colors
+const getCategoryColor = (category: string = 'technology') => {
+  const colors = {
+    certification: 'bg-amber-500',
+    technology: 'bg-blue-500',
+    career: 'bg-green-500',
+    project: 'bg-purple-500',
+    infrastructure: 'bg-gray-500'
+  };
+  return colors[category as keyof typeof colors] || colors.technology;
+};
+
+// Helper function to get category icon
+const getCategoryIcon = (category: string = 'technology') => {
+  const icons = {
+    certification: '🏆',
+    technology: '⚡',
+    career: '💼',
+    project: '🚀',
+    infrastructure: '🏗️'
+  };
+  return icons[category as keyof typeof icons] || icons.technology;
+};
+
+
 export default function Timeline() {
-  const [visibleYears, setVisibleYears] = useState<Set<string>>(new Set());
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const year = entry.target.getAttribute("data-year");
-            if (year) {
-              setVisibleYears((prev) => new Set(prev).add(year));
-            }
-          }
-        });
-      },
-      { threshold: 0.2 }
-    );
-
-    document.querySelectorAll(".timeline-item").forEach((item) => {
-      observer.observe(item);
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
   return (
     <section className="py-20 bg-white dark:bg-gray-900">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-4xl font-bold mb-12 text-center text-gray-900 dark:text-white">
           My Journey
         </h2>
-        <div className="space-y-12">
-          {timeline.map((timelineYear) => (
-            <div
-              key={timelineYear.year}
-              className={`timeline-item transition-all duration-700 ${
-                visibleYears.has(timelineYear.year)
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-10"
-              }`}
-              data-year={timelineYear.year}
-            >
-              <div className="font-bold text-3xl text-gray-900 dark:text-white mb-6 text-center">
-                {timelineYear.year}
-              </div>
-              <div className="space-y-4">
-                {timelineYear.events.map((event, index) => (
-                  <div
-                    key={index}
-                    className={`flex items-start gap-4 p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all ${
-                      visibleYears.has(timelineYear.year)
-                        ? "opacity-100 translate-x-0"
-                        : "opacity-0 translate-x-10"
-                    }`}
-                    style={{
-                      transitionDelay: visibleYears.has(timelineYear.year)
-                        ? `${index * 100}ms`
-                        : "0ms",
-                    }}
-                  >
-                    <div className="h-2 w-2 rounded-full bg-blue-600 dark:bg-blue-400 mt-2 flex-shrink-0"></div>
-                    <div className="text-sm text-gray-700 dark:text-gray-300">
-                      {event}
+        
+        <div className="relative">
+          {/* Timeline line */}
+          <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gray-300 dark:bg-gray-600"></div>
+          
+          <div className="space-y-12">
+            {timeline.map((timelineYear, i) => {
+              const categoryColor = getCategoryColor(timelineYear.category);
+              
+              return (
+                <div key={timelineYear.year} className="relative">
+                  {/* Timeline dot */}
+                  <div className={`absolute left-4 w-4 h-4 rounded-full border-4 border-white dark:border-gray-900 ${categoryColor}`}></div>
+                  
+                  {/* Content */}
+                  <div className="ml-16">
+                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-6">
+                      <h3 className="text-2xl font-bold text-huskyPurple dark:text-huskyPink mb-4">
+                        {timelineYear.year}
+                      </h3>
+                      
+                      <ul className="space-y-3">
+                        {timelineYear.events.map((event, idx) => (
+                          <li key={idx} className="flex items-start gap-3">
+                            <div className={`mt-2 w-2 h-2 rounded-full ${categoryColor} flex-shrink-0`}></div>
+                            <span className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                              {event}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-          ))}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>
