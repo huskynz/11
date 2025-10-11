@@ -45,9 +45,9 @@ export default function Nav() {
             const baseClass =
               "px-5 py-2 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 ";
             const activeClass =
-              "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md";
+              "bg-huskyPurple text-white shadow-md";
             const inactiveClass =
-              "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-blue-600 dark:hover:text-blue-400";
+              "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-huskyBlue dark:hover:text-huskyPink";
             if (item.anchor) {
               return (
                 <a
