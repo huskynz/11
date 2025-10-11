@@ -8,10 +8,10 @@ export default function Nav() {
   const router = useRouter();
   const navItems = [
     { name: "Home", href: "/" },
-    { name: "Blog", href: "/blog" },
-    { name: "Timeline", href: "/timeline" },
     { name: "About", href: "#about", anchor: true },
     { name: "Contact", href: "#contact", anchor: true },
+    { name: "Timeline", href: "/timeline" },
+    { name: "Blog", href: "/blog" },
   ];
 
   // Handler for About/Contact to always go to homepage and scroll
