@@ -5,12 +5,12 @@ export default function BlogPage() {
   const posts = getAllPosts();
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 py-20">
+  <div className="min-h-screen bg-white dark:bg-gray-900 py-20">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-12">
           <Link
             href="/"
-            className="text-blue-600 dark:text-blue-400 hover:underline mb-4 inline-block"
+            className="text-huskyBlue dark:text-huskyPink hover:underline mb-4 inline-block"
           >
             ← Back to Home
           </Link>
@@ -34,7 +34,7 @@ export default function BlogPage() {
               <Link
                 key={post.slug}
                 href={`/blog/${post.slug}`}
-                className="block p-6 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-800 dark:to-gray-700 rounded-lg hover:shadow-lg transition-all"
+                className="block p-6 bg-gray-100 dark:bg-gray-700 rounded-lg hover:shadow-lg transition-all"
               >
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
                   {post.title}
@@ -55,7 +55,7 @@ export default function BlogPage() {
                       {post.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="px-2 py-1 bg-blue-600 dark:bg-blue-400 text-white text-xs rounded"
+                          className="px-2 py-1 bg-huskyPurple dark:bg-huskyPink text-white text-xs rounded"
                         >
                           {tag}
                         </span>

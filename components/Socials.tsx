@@ -38,7 +38,7 @@ export default function Socials() {
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-800 dark:to-gray-900">
+  <section className="py-20 bg-gray-50 dark:bg-gray-900">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-4xl font-bold mb-8 text-center text-gray-900 dark:text-white">
           Connect With Me
@@ -59,7 +59,7 @@ export default function Socials() {
                 <div className="font-semibold text-gray-900 dark:text-white">
                   {social.name}
                 </div>
-                <div className="text-blue-600 dark:text-blue-400 text-sm">
+                <div className="text-huskyBlue dark:text-huskyPink text-sm">
                   {social.text}
                 </div>
               </div>
