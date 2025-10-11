@@ -33,7 +33,7 @@ export default function Socials() {
     {
       name: "Download CV",
       text: "Download",
-      href: "https://serv.husky.nz/public/peter-cv-v7.pdf",
+      href: "https://hnz.li/cv",
     },
   ];
 
