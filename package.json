@@ -1,6 +1,6 @@
 {
-  "name": "hunz-web-11",
-  "version": "11.0.2",
+  "name": "hunz-web",
+  "version": "11.0.3",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
