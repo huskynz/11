@@ -13,7 +13,7 @@
 
 ## About The Project
 
-This site is built in AstroJS and is the new main site for HuskyNZ where I can share what I know and about who I am
+This site is built in NextJS and is the new main site for HuskyNZ where I can share what I know and about who I am
 
 
 ## Built With
