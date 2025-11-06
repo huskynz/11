@@ -55,13 +55,27 @@ export function getPrivateDocBySlug(slug: string): PrivateDoc | null {
     return null;
   }
 
+  // Sanitize slug to prevent path traversal attacks
+  const sanitizedSlug = slug.replace(/[^a-zA-Z0-9-_]/g, "");
+  if (sanitizedSlug !== slug) {
+    return null;
+  }
+
   try {
-    const fullPath = path.join(privateDocsDirectory, `${slug}.md`);
+    const fullPath = path.join(privateDocsDirectory, `${sanitizedSlug}.md`);
+    
+    // Verify the resolved path is still within the private docs directory
+    const resolvedPath = path.resolve(fullPath);
+    const resolvedDir = path.resolve(privateDocsDirectory);
+    if (!resolvedPath.startsWith(resolvedDir)) {
+      return null;
+    }
+    
     const fileContents = fs.readFileSync(fullPath, "utf8");
     const { data, content } = matter(fileContents);
 
     return {
-      slug,
+      slug: sanitizedSlug,
       title: data.title,
       summary: data.summary,
       date: data.date,
