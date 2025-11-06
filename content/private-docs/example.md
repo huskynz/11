@@ -19,7 +19,7 @@ This is an example of a private document that requires a 6-digit PIN to access.
 
 ## Usage
 
-To access this document, you need to enter the PIN: **123456**
+> **Note**: This is a demonstration document. In a real scenario, the PIN would never be revealed in the document content. For this example, the PIN is: **123456**
 
 ## Content
 
