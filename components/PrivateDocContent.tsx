@@ -30,7 +30,7 @@ export default function PrivateDocContent({
     }
   }, [slug]);
 
-  const handleVerify = async (pin: string) => {
+  const handleVerify = async (pin: string, turnstileToken: string) => {
     setLoading(true);
     setError("");
 
@@ -40,7 +40,7 @@ export default function PrivateDocContent({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ slug, pin }),
+        body: JSON.stringify({ slug, pin, turnstileToken }),
       });
 
       const data = await response.json();
@@ -49,7 +49,7 @@ export default function PrivateDocContent({
         sessionStorage.setItem(`private-doc-${slug}`, "true");
         setIsVerified(true);
       } else {
-        setError("Invalid PIN. Please try again.");
+        setError(data.error || "Invalid PIN. Please try again.");
       }
     } catch {
       setError("An error occurred. Please try again.");
