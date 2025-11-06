@@ -1,15 +1,58 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+
+declare global {
+  interface Window {
+    turnstile?: {
+      render: (element: HTMLElement, options: Record<string, unknown>) => string;
+      reset: (widgetId?: string) => void;
+      remove: (widgetId?: string) => void;
+    };
+    onPinTurnstileSuccess?: (token: string) => void;
+  }
+}
 
 interface PinInputProps {
-  onVerify: (pin: string) => void;
+  onVerify: (pin: string, turnstileToken: string) => void;
   error?: string;
   loading?: boolean;
 }
 
 export default function PinInput({ onVerify, error, loading }: PinInputProps) {
   const [pin, setPin] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState<string>("");
+  const turnstileRef = useRef<HTMLDivElement>(null);
+  const widgetIdRef = useRef<string>("");
+
+  useEffect(() => {
+    // Set up the global callback
+    window.onPinTurnstileSuccess = (token: string) => {
+      setTurnstileToken(token);
+    };
+
+    // Check if script already exists
+    const existingScript = document.querySelector('script[src*="turnstile"]');
+    if (existingScript) {
+      return;
+    }
+
+    // Load Turnstile script
+    const script = document.createElement("script");
+    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+    script.async = true;
+    script.defer = true;
+    script.onerror = () => {
+      console.warn("Failed to load Turnstile script");
+    };
+    document.body.appendChild(script);
+
+    return () => {
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+    };
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, "").slice(0, 6);
@@ -19,7 +62,7 @@ export default function PinInput({ onVerify, error, loading }: PinInputProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (pin.length === 6) {
-      onVerify(pin);
+      onVerify(pin, turnstileToken);
     }
   };
 
@@ -47,6 +90,23 @@ export default function PinInput({ onVerify, error, loading }: PinInputProps) {
             disabled={loading}
           />
         </div>
+
+        {/* Cloudflare Turnstile Widget */}
+        <div className="flex justify-center">
+          <div
+            ref={turnstileRef}
+            className="cf-turnstile"
+            data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA"}
+            data-callback="onPinTurnstileSuccess"
+            data-theme="auto"
+          ></div>
+        </div>
+
+        {process.env.NODE_ENV === "development" && !turnstileToken && (
+          <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+            Note: Turnstile widget may not load in development. The form will still work.
+          </p>
+        )}
 
         {error && (
           <div className="text-red-600 dark:text-red-400 text-sm text-center">
