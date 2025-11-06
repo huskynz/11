@@ -49,7 +49,15 @@ export async function POST(request: Request) {
       );
     }
 
-    // Verify Turnstile token
+    // In production, require Turnstile token
+    if (process.env.NODE_ENV === "production" && !turnstileToken) {
+      return NextResponse.json(
+        { verified: false, error: "Captcha verification required" },
+        { status: 400 }
+      );
+    }
+
+    // Verify Turnstile token if provided (or if in production)
     if (turnstileToken) {
       const isValidToken = await verifyTurnstile(turnstileToken);
       if (!isValidToken) {
