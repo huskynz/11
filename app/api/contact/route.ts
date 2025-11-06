@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { z } from "zod";
+import { verifyTurnstile } from "@/lib/turnstile";
 
 const contactSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -8,35 +9,6 @@ const contactSchema = z.object({
   message: z.string().min(10, "Message must be at least 10 characters"),
   turnstileToken: z.string().optional(),
 });
-
-async function verifyTurnstile(token: string): Promise<boolean> {
-  if (!process.env.TURNSTILE_SECRET_KEY) {
-    console.warn("TURNSTILE_SECRET_KEY not set, skipping verification");
-    return true;
-  }
-
-  try {
-    const response = await fetch(
-      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          secret: process.env.TURNSTILE_SECRET_KEY,
-          response: token,
-        }),
-      }
-    );
-
-    const data = await response.json();
-    return data.success === true;
-  } catch (error) {
-    console.error("Turnstile verification error:", error);
-    return false;
-  }
-}
 
 export async function POST(request: NextRequest) {
   try {
