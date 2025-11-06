@@ -80,5 +80,17 @@ export function verifyPin(slug: string, pin: string): boolean {
   if (!doc) {
     return false;
   }
-  return doc.pin === pin;
+  
+  // Use constant-time comparison to prevent timing attacks
+  const expectedPin = doc.pin;
+  if (expectedPin.length !== pin.length) {
+    return false;
+  }
+  
+  let result = 0;
+  for (let i = 0; i < expectedPin.length; i++) {
+    result |= expectedPin.charCodeAt(i) ^ pin.charCodeAt(i);
+  }
+  
+  return result === 0;
 }
