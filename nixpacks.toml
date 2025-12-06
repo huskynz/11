@@ -1,3 +1,15 @@
-[deploy.envs]
-NODE_ENV = "production"
-NIXPACKS_NODE_VERSION = 22
+[phases.setup]
+
+nixPkgs = ['nodejs_20']
+
+[phases.install]
+
+cmds = ['pnpm ci']
+
+[phases.build]
+
+cmds = ['pnpm run build']
+
+[start]
+
+cmd = 'pnpm run start'
