@@ -38,18 +38,21 @@ WORKDIR /app
 
 
 RUN addgroup --system nextjs && adduser --system --ingroup nextjs nextjs
-RUN chown -R nextjs:nextjs /app
 
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=3000
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Enable pnpm via Corepack as root (needs /usr/local/bin write)
+RUN corepack enable && corepack prepare pnpm@10 --activate
 
 # Copy only the necessary runtime files
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
+
+RUN chown -R nextjs:nextjs /app
 
 USER nextjs
 
