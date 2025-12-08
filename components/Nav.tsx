@@ -1,12 +1,27 @@
 "use client";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useCallback } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
+import Logo from "./logo";
+
+type NavItem =
+  | { name: string; href: string; anchor?: false }
+  | { name: string; href: string; anchor: true };
 
 export default function Nav() {
-  const pathname = usePathname();
-  const router = useRouter();
-  const navItems = [
+  const [pathname, setPathname] = useState<string>("/");
+  const [hash, setHash] = useState<string>("");
+
+  // Use window location so Nav still works when router context is missing (e.g. global 404)
+  useEffect(() => {
+    setPathname(window.location.pathname);
+    setHash(window.location.hash);
+
+    const handleHashChange = () => setHash(window.location.hash);
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
+
+  const navItems: NavItem[] = [
     { name: "Home", href: "/" },
     { name: "About", href: "#about", anchor: true },
     { name: "Contact", href: "#contact", anchor: true },
@@ -14,19 +29,17 @@ export default function Nav() {
     { name: "Blog", href: "/blog" },
   ];
 
-  // Handler for About/Contact to always go to homepage and scroll
-  const handleAnchorNav = useCallback((e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+  const forceNavigate = (href: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    if (pathname !== "/") {
-      router.push(`/${href}`); // navigates to /#about or /#contact
-    } else {
-      window.location.hash = href;
+    if (typeof window !== "undefined") {
+      window.location.href = href;
     }
-  }, [pathname, router]);
+  };
+
   return (
-  <nav className="w-full py-2 px-4 flex items-center bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-md fixed top-0 left-0 z-50 border-b border-gray-200 dark:border-gray-800">
+    <nav className="w-full py-2 px-4 flex items-center bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-md fixed top-0 left-0 z-50 border-b border-gray-200 dark:border-gray-800">
       <div className="flex items-center gap-2 min-w-max">
-        <img src="https://serv.husky.nz/logo/default.png" alt="HuskyNZ Logo" className="h-8 w-8 rounded-md shadow-md" />
+        <Logo w={50} h={50} />
       </div>
       <div className="flex-1 flex justify-center">
         <div className="flex gap-3 md:gap-6 text-sm font-semibold items-center">
@@ -35,39 +48,31 @@ export default function Nav() {
             // Only one item can be active at a time
             if (!item.anchor) {
               isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
-            } else if (pathname === "/" && typeof window !== "undefined") {
-              isActive = window.location.hash === item.href;
+            } else {
+              isActive = pathname === "/" && hash === item.href;
             }
             // If a hash nav is active, Home should not be active
-            if (item.name === "Home" && pathname === "/" && typeof window !== "undefined" && (window.location.hash === "#about" || window.location.hash === "#contact")) {
+            if (item.name === "Home" && pathname === "/" && (hash === "#about" || hash === "#contact")) {
               isActive = false;
             }
             const baseClass =
               "px-5 py-2 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 ";
-            const activeClass =
-              "bg-huskyPurple text-white shadow-md";
+            const activeClass = "bg-huskyPurple text-white shadow-md";
             const inactiveClass =
               "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-huskyBlue dark:hover:text-huskyPink";
-            if (item.anchor) {
-              return (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className={baseClass + (isActive ? activeClass : inactiveClass)}
-                  onClick={(e) => handleAnchorNav(e, item.href)}
-                >
-                  {item.name}
-                </a>
-              );
-            }
+
+            // Use plain anchors to avoid relying on Next.js router context
+            const href = item.anchor ? `/${item.href}` : item.href;
+
             return (
-              <Link
+              <a
                 key={item.name}
-                href={item.href}
+                href={href}
+                onClick={forceNavigate(href)}
                 className={baseClass + (isActive ? activeClass : inactiveClass)}
               >
                 {item.name}
-              </Link>
+              </a>
             );
           })}
         </div>
