@@ -11,11 +11,11 @@ RUN adduser --system nextjs
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential && rm -rf /var/lib/apt/lists/*
 
-
-USER nextjs
-
 # Enable pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
+
+RUN chown -R nextjs:nextjs /app
+USER nextjs
 
 # Copy lockfile and package manifest first (for caching)
 COPY package.json pnpm-lock.yaml ./
