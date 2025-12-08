@@ -1,4 +1,11 @@
-export const timeline = [
+interface TimelineEvent {
+  year: string;
+  events: string[];
+  category?: 'certification' | 'technology' | 'career' | 'project' | 'infrastructure';
+}
+
+
+export const timeline: TimelineEvent[] = [
   {
     year: "2018",
     events: ["Deployed first Ubuntu 18.04 VM in Hyper-V"],

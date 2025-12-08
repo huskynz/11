@@ -38,8 +38,8 @@ export default function Nav() {
 
   return (
     <nav className="w-full py-2 px-4 flex items-center bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-md fixed top-0 left-0 z-50 border-b border-gray-200 dark:border-gray-800">
-      <div className="flex items-center gap-2 min-w-max">
-        <Logo w={50} h={50} />
+      <div className="flex flex-col items-start gap-1 min-w-max leading-tight">
+        <Logo w={50} h={50} className="block" />
       </div>
       <div className="flex-1 flex justify-center">
         <div className="flex gap-3 md:gap-6 text-sm font-semibold items-center">
