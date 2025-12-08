@@ -50,10 +50,6 @@ ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
-# Bring in the pnpm binary installed in the builder stage
-COPY --from=builder /usr/local/lib/node_modules /usr/local/lib/node_modules
-COPY --from=builder /usr/local/bin/pnpm /usr/local/bin/pnpm
-
 
 USER nextjs
 
