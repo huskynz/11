@@ -5,9 +5,14 @@ FROM node:20.11-slim AS builder
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 
+RUN adduser --system nextjs
+
 # Install build tools (only if you have native deps)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential && rm -rf /var/lib/apt/lists/*
+
+
+USER nextjs
 
 # Enable pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
@@ -34,6 +39,8 @@ ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=3000
 ENV NEXT_TELEMETRY_DISABLED=1
+
+USER nextjs
 
 # Enable pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
