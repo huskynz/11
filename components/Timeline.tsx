@@ -1,11 +1,5 @@
 "use client";
 
-interface TimelineEvent {
-  year: string;
-  events: string[];
-  category?: 'certification' | 'technology' | 'career' | 'project' | 'infrastructure';
-}
-
 import { timeline } from '../lib/events';
 
 // Helper function to get category colors
