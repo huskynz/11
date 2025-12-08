@@ -11,11 +11,9 @@ RUN adduser --system nextjs
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential && rm -rf /var/lib/apt/lists/*
 
-# Enable pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
 
-RUN chown -R nextjs:nextjs /app
-USER nextjs
+
+RUN corepack enable && corepack prepare pnpm@10 --activate
 
 # Copy lockfile and package manifest first (for caching)
 COPY package.json pnpm-lock.yaml ./
@@ -29,6 +27,9 @@ COPY . .
 # Build Next.js app
 RUN pnpm build
 
+RUN chown -R nextjs:nextjs /app
+
+
 # -------------------------------------------------------
 # Runtime stage
 # -------------------------------------------------------
@@ -37,7 +38,7 @@ WORKDIR /app
 
 
 RUN adduser --system nextjs
-
+RUN chown -R nextjs:nextjs /app
 
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
@@ -45,13 +46,14 @@ ENV PORT=3000
 ENV NEXT_TELEMETRY_DISABLED=1
 
 
-# Enable pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
-
 # Copy only the necessary runtime files
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
+# Bring in the pnpm binary installed in the builder stage
+COPY --from=builder /usr/local/lib/node_modules /usr/local/lib/node_modules
+COPY --from=builder /usr/local/bin/pnpm /usr/local/bin/pnpm
+
 
 USER nextjs
 
