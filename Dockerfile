@@ -5,7 +5,7 @@ FROM node:20.11-slim AS builder
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN adduser --system nextjs
+RUN addgroup --system nextjs && adduser --system --ingroup nextjs nextjs
 
 # Install build tools (only if you have native deps)
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -37,7 +37,7 @@ FROM node:20.11-slim AS runtime
 WORKDIR /app
 
 
-RUN adduser --system nextjs
+RUN addgroup --system nextjs && adduser --system --ingroup nextjs nextjs
 RUN chown -R nextjs:nextjs /app
 
 ENV NODE_ENV=production
