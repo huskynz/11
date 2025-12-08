@@ -44,7 +44,6 @@ ENV HOST=0.0.0.0
 ENV PORT=3000
 ENV NEXT_TELEMETRY_DISABLED=1
 
-USER nextjs
 
 # Enable pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
@@ -53,6 +52,8 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
+
+USER nextjs
 
 EXPOSE 3000
 CMD ["pnpm", "start"]
