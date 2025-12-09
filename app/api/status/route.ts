@@ -55,7 +55,7 @@ const art = String.raw`
 
 const message = "This HuskyNZ Site is responding to your request!";
 
-export async function GET() {
+export function GET() {
 
   return new Response(`${art}\n${message}\n`, {
     status: 200,
