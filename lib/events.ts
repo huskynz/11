@@ -13,7 +13,12 @@ export const timeline: TimelineEvent[] = [
   },
   {
     year: "2019",
-    events: ["Continued experimenting with Hyper-V"],
+    events: [
+      "Continued experimenting with Hyper-V",
+      "Moved to New Zealand",
+      "Messed around with Virtualbox"
+
+    ],
     category: 'career'
   },
   {
@@ -55,6 +60,7 @@ export const timeline: TimelineEvent[] = [
   {
     year: "2023",
     events: [
+      "Migrated AD Domain from AWS to Azure",
       "Earned MS-900 Certification",
       "Gained work experience at Inde Technology (5 weeks)",
       "Began experimenting with Sophos Firewalls",
@@ -85,6 +91,10 @@ export const timeline: TimelineEvent[] = [
       "Setup A SAN in my homelab to Learn and Understand network storage",
       "Setup Citrix Virtual Apps and Desktop and intrgrated with ESXi and Vcenter to auto provisioning and deployment of VDI vm's",
       "Deployed a more advanced Citrix lab with Netscaler, FAS and ADFS for SAML authentication",
+      "Configured and deployed a Cisco ISR4451 router",
+      "Expand hnz.li with redis caching to improve performance",
+
+
     ],
     category: 'infrastructure'
   },

@@ -14,6 +14,7 @@ export default function Footer() {
           >
             v{packageJson.version}
           </a>
+          <p>{process.env.envro}</p>
         </div>
         
         {/* Center content */}
