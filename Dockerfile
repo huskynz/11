@@ -11,9 +11,8 @@ RUN addgroup --system nextjs && adduser --system --home /home/nextjs --ingroup n
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential && rm -rf /var/lib/apt/lists/*
 
-
-
 RUN corepack enable && corepack prepare pnpm@10 --activate
+
 RUN mkdir -p /home/nextjs && chown -R nextjs:nextjs /home/nextjs /app
 
 # Copy lockfile and package manifest first (for caching)
@@ -30,13 +29,11 @@ RUN pnpm build
 
 RUN chown -R nextjs:nextjs /home/nextjs /app
 
-
 # -------------------------------------------------------
 # Runtime stage
 # -------------------------------------------------------
 FROM node:20.11-slim AS runtime
 WORKDIR /app
-
 
 RUN addgroup --system nextjs && adduser --system --home /home/nextjs --ingroup nextjs nextjs
 
