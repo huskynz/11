@@ -25,8 +25,7 @@ jobs:
       all_tags: ${{ steps.compute.outputs.all_tags }}
       labels: ${{ steps.meta.outputs.labels }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Extract Docker metadata (labels)
         id: meta
@@ -40,29 +39,28 @@ jobs:
         id: compute
         shell: bash
         run: |
-          # Only push on non-PRs
           if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
             echo "should_push=false" >> "$GITHUB_OUTPUT"
           else
             echo "should_push=true" >> "$GITHUB_OUTPUT"
           fi
 
-          # Branch-based tags
           if [[ "${GITHUB_REF_NAME}" == "master" ]]; then
             BRANCH_TAGS=("latest" "master")
           else
             BRANCH_TAGS=("${GITHUB_REF_NAME}")
           fi
 
-          # Generate fully qualified tags for both registries
           ALL_TAGS=()
           for t in "${BRANCH_TAGS[@]}"; do
             ALL_TAGS+=("${REGISTRY}/${IMAGE_NAME}:$t")
             ALL_TAGS+=("docker.io/${IMAGE_NAME}:$t")
           done
 
-          # Convert to JSON array for proper multi-tag handling
-          echo "all_tags=$(printf '%s\n' "${ALL_TAGS[@]}" | jq -R -s -c 'split("\n")[:-1]')" >> "$GITHUB_OUTPUT"
+          # JSON array output
+          jq -n --argjson arr "$(printf '%s\n' "${ALL_TAGS[@]}" | jq -R . | jq -s .)" '$arr' > all_tags.json
+          ALL_TAGS_JSON=$(cat all_tags.json)
+          echo "all_tags=$ALL_TAGS_JSON" >> "$GITHUB_OUTPUT"
 
   build:
     needs: setup
@@ -73,14 +71,11 @@ jobs:
       id-token: write
       attestations: write
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-qemu-action@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@v3
 
       - name: Log in to Quay
         if: needs.setup.outputs.should_push == 'true'
@@ -116,12 +111,11 @@ jobs:
     needs: [setup, build]
     runs-on: ubuntu-latest
     steps:
-      - name: Summarize build
-        uses: actions/github-script@v7
+      - uses: actions/github-script@v7
         with:
           script: |
-            const tags = `${{ toJSON(needs.setup.outputs.all_tags) }}`.split(',').map(t => t.trim()).filter(Boolean)
-            const pushed = `${{ needs.setup.outputs.should_push }}` === 'true'
+            const tags = JSON.parse('${{ needs.setup.outputs.all_tags }}');
+            const pushed = '${{ needs.setup.outputs.should_push }}' === 'true';
             const summary = [
               `Event: ${{ github.event_name }}`,
               `Pushed: ${pushed}`,
@@ -131,7 +125,7 @@ jobs:
               `Image: ${process.env.REGISTRY}/${process.env.IMAGE_NAME}`,
               'Tags:',
               ...tags.map(t => `- ${t}`)
-            ].join('\n')
-            core.summary.addHeading('Docker publish result', 2)
-            core.summary.addCodeBlock(summary, 'text')
-            await core.summary.write()
+            ].join('\n');
+            core.summary.addHeading('Docker publish result', 2);
+            core.summary.addCodeBlock(summary, 'text');
+            await core.summary.write();
