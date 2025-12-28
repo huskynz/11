@@ -21,42 +21,47 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     outputs:
-      tags: ${{ steps.meta.outputs.tags }}
-      labels: ${{ steps.meta.outputs.labels }}
-      image: ${{ steps.compute.outputs.image }}
       should_push: ${{ steps.compute.outputs.should_push }}
-      primary_tag: ${{ steps.compute.outputs.primary_tag }}
+      all_tags: ${{ steps.compute.outputs.all_tags }}
+      labels: ${{ steps.meta.outputs.labels }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Extract Docker metadata (tags, labels)
+      - name: Extract Docker metadata (labels)
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-            docker.io/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           labels: |
             org.opencontainers.image.description=HuskyNZ main site container image (Next.js)
-          tags: |
-            type=ref,event=branch
-            type=ref,event=tag
-            type=semver,pattern={{ version }}
-            type=semver,pattern={{ major }}.{{ minor }}
-            type=semver,pattern={{ major }}
-            type=raw,value=latest,enable={{ is_default_branch }}
-          annotations: |
-            org.opencontainers.image.description=HuskyNZ Main Site Container Image (Next.js)
 
-      - name: Compute outputs
+      - name: Compute push flags & full tags
         id: compute
         shell: bash
         run: |
-          echo "image=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}" >> "$GITHUB_OUTPUT"
-          echo "should_push=$([[ '${{ github.event_name }}' != 'pull_request' ]] && echo true || echo false)" >> "$GITHUB_OUTPUT"
-          primary_tag=$(echo "${{ steps.meta.outputs.tags }}" | head -n 1)
-          echo "primary_tag=${primary_tag}" >> "$GITHUB_OUTPUT"
+          # Only push on non-PRs
+          if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+            echo "should_push=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_push=true" >> "$GITHUB_OUTPUT"
+          fi
+
+          # Branch-based tag
+          if [[ "${GITHUB_REF_NAME}" == "master" ]]; then
+            BRANCH_TAGS="latest master"
+          else
+            BRANCH_TAGS="${GITHUB_REF_NAME}"
+          fi
+
+          # Generate fully qualified tags for both registries
+          ALL_TAGS=""
+          for t in $BRANCH_TAGS; do
+            ALL_TAGS+="${REGISTRY}/${IMAGE_NAME}:$t "
+            ALL_TAGS+="docker.io/${IMAGE_NAME}:$t "
+          done
+
+          echo "all_tags=$ALL_TAGS" >> "$GITHUB_OUTPUT"
 
   build:
     needs: setup
@@ -70,11 +75,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-
-      - name: Set up QEMU (for multi-arch)
-        uses: docker/setup-qemu-action@v3
 
       - name: Log in to Quay
         if: needs.setup.outputs.should_push == 'true'
@@ -99,8 +104,8 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           push: ${{ needs.setup.outputs.should_push == 'true' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ needs.setup.outputs.all_tags }}
+          labels: ${{ needs.setup.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           provenance: true
@@ -114,12 +119,12 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const tags = `${{ toJSON(needs.setup.outputs.tags) }}`.split('\n').filter(Boolean)
+            const tags = `${{ toJSON(needs.setup.outputs.all_tags) }}`.split(' ').filter(Boolean)
             const pushed = `${{ needs.setup.outputs.should_push }}` === 'true'
             const summary = [
               `Event: ${{ github.event_name }}`,
               `Pushed: ${pushed}`,
-              `Registries:`,
+              'Registries:',
               `- ${process.env.REGISTRY}`,
               `- docker.io`,
               `Image: ${process.env.REGISTRY}/${process.env.IMAGE_NAME}`,
