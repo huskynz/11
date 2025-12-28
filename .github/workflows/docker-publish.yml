@@ -34,7 +34,9 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+            docker.io/${{ env.IMAGE_NAME }}
           labels: |
             org.opencontainers.image.description=HuskyNZ main site container image (Next.js)
           tags: |
@@ -82,70 +84,23 @@ jobs:
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_PASSWORD }}
 
-
-      - name: Build and (optionally) push image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64
-          push: ${{ needs.setup.outputs.should_push == 'true' }}
-          tags: ${{ needs.setup.outputs.tags }}
-          labels: ${{ needs.setup.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          provenance: true
-          sbom: true
-
-  publish:
-    needs: [setup, build]
-    if: needs.setup.outputs.should_push == 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - name: Log in to Quay
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ secrets.QUAY_USERNAME }}
-          password: ${{ secrets.QUAY_PASSWORD }}
-
-      - name: Inspect pushed manifest
-        run: |
-          docker buildx imagetools inspect "${{ needs.setup.outputs.primary_tag }}"
-
-  publish_dockerhub:
-    needs: [setup, build]
-    if: needs.setup.outputs.should_push == 'true' && vars.PUSH_DOCKERHUB == 'true'
-    runs-on: ubuntu-latest
-    steps:
       - name: Log in to Docker Hub
+        if: needs.setup.outputs.should_push == 'true'
         uses: docker/login-action@v3
         with:
           registry: docker.io
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Set up QEMU (for multi-arch)
-        uses: docker/setup-qemu-action@v3
-
-      - name: Build and (optionally) push image
+      - name: Build and push image
         uses: docker/build-push-action@v6
         with:
           context: .
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           push: ${{ needs.setup.outputs.should_push == 'true' }}
-          tags: ${{ needs.setup.outputs.tags }}
-          labels: ${{ needs.setup.outputs.labels }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           provenance: true
@@ -164,8 +119,10 @@ jobs:
             const summary = [
               `Event: ${{ github.event_name }}`,
               `Pushed: ${pushed}`,
-              `Registry: ${{ env.REGISTRY }}`,
-              `Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}`,
+              `Registries:`,
+              `- ${process.env.REGISTRY}`,
+              `- docker.io`,
+              `Image: ${process.env.REGISTRY}/${process.env.IMAGE_NAME}`,
               'Tags:',
               ...tags.map(t => `- ${t}`)
             ].join('\n')
