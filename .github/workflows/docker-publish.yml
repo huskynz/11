@@ -127,25 +127,9 @@ jobs:
           registry: docker.io
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
-
-      - name: Copy Quay manifests to Docker Hub
-        shell: bash
-        env:
-          QUAY_IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          HUB_IMAGE: docker.io/huskynz/11
-          TAGS: ${{ needs.setup.outputs.tags }}
+      - name: Inspect pushed manifest
         run: |
-          set -euo pipefail
-          echo "Copying tags to Docker Hub"
-          while IFS= read -r fulltag; do
-            [ -z "$fulltag" ] && continue
-            # Extract the tag name after the last colon
-            tagname="${fulltag##*:}"
-            echo "Replicating $tagname"
-            docker buildx imagetools create -t "$HUB_IMAGE:$tagname" "$QUAY_IMAGE:$tagname"
-          done <<EOF
-          $TAGS
-          EOF
+          docker buildx imagetools inspect "${{ needs.setup.outputs.primary_tag }}"
 
   post:
     needs: [setup, build]
