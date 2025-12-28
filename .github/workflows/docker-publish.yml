@@ -127,9 +127,19 @@ jobs:
           registry: docker.io
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
-      - name: Inspect pushed manifest
-        run: |
-          docker buildx imagetools inspect "${{ needs.setup.outputs.primary_tag }}"
+      - name: Build and (optionally) push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: ${{ needs.setup.outputs.should_push == 'true' }}
+          tags: ${{ needs.setup.outputs.tags }}
+          labels: ${{ needs.setup.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          provenance: true
+          sbom: true
 
   post:
     needs: [setup, build]
