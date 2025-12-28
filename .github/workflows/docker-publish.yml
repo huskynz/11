@@ -14,8 +14,8 @@ on:
   workflow_dispatch:
 
 env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  REGISTRY: quay.io
+  IMAGE_NAME: huskynz/11
 
 jobs:
   setup:
@@ -74,13 +74,13 @@ jobs:
       - name: Set up QEMU (for multi-arch)
         uses: docker/setup-qemu-action@v3
 
-      - name: Log in to GitHub Container Registry
+      - name: Log in to Quay
         if: needs.setup.outputs.should_push == 'true'
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_PASSWORD }}
 
       - name: Build and (optionally) push image
         uses: docker/build-push-action@v6
@@ -104,12 +104,12 @@ jobs:
       contents: read
       packages: write
     steps:
-      - name: Log in to GitHub Container Registry
+      - name: Log in to Quay
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_PASSWORD }}
 
       - name: Inspect pushed manifest
         run: |
