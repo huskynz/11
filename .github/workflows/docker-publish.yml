@@ -1,4 +1,4 @@
-name: Publish Docker to GHCR
+name: Build and Publish Docker Image
 
 on:
   push:
@@ -82,6 +82,7 @@ jobs:
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_PASSWORD }}
 
+
       - name: Build and (optionally) push image
         uses: docker/build-push-action@v6
         with:
@@ -114,6 +115,37 @@ jobs:
       - name: Inspect pushed manifest
         run: |
           docker buildx imagetools inspect "${{ needs.setup.outputs.primary_tag }}"
+
+  publish_dockerhub:
+    needs: [setup, build]
+    if: needs.setup.outputs.should_push == 'true' && vars.PUSH_DOCKERHUB == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          registry: docker.io
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Copy Quay manifests to Docker Hub
+        shell: bash
+        env:
+          QUAY_IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          HUB_IMAGE: docker.io/huskynz/11
+          TAGS: ${{ needs.setup.outputs.tags }}
+        run: |
+          set -euo pipefail
+          echo "Copying tags to Docker Hub"
+          while IFS= read -r fulltag; do
+            [ -z "$fulltag" ] && continue
+            # Extract the tag name after the last colon
+            tagname="${fulltag##*:}"
+            echo "Replicating $tagname"
+            docker buildx imagetools create -t "$HUB_IMAGE:$tagname" "$QUAY_IMAGE:$tagname"
+          done <<EOF
+          $TAGS
+          EOF
 
   post:
     needs: [setup, build]
