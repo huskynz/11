@@ -1,0 +1,13 @@
+# Reduce Docker build context size
+.git
+node_modules
+.next
+pnpm-lock.yaml
+*.log
+Dockerfile
+.github
+.vscode
+coverage
+build
+out
+**/*.tsbuildinfo
