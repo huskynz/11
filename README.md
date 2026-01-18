@@ -27,6 +27,21 @@ This site is built in NextJS and is the new main site for HuskyNZ where I can sh
 
 Im working on getting content into the blog and projects
 
+## Docker Publish (GHCR)
+
+- **Workflow**: A GitHub Actions workflow at [.github/workflows/docker-publish.yml](.github/workflows/docker-publish.yml) builds the Docker image from [Dockerfile](Dockerfile) and publishes it to GitHub Container Registry.
+- **Registry**: Images are pushed to `ghcr.io/<owner>/<repo>` (derived from the repository).
+- **Triggers**: Runs on pushes to `master`/`dev`, PRs (build-only), and tags matching `v*` or `cr*`.
+- **Permissions**: The workflow uses `GITHUB_TOKEN`; ensure job permissions include `packages: write` (already set in the workflow). No extra secrets are needed.
+- **First Run**: After merging to default branch (`master`), check the package under GitHub → Packages. Adjust visibility (public/private) as desired.
+
+### Manually pulling the image
+
+```bash
+docker pull ghcr.io/<owner>/<repo>:latest
+docker run -p 3000:3000 ghcr.io/<owner>/<repo>:latest
+```
+
 ## Contributing
 
 Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.

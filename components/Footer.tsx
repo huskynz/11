@@ -14,7 +14,7 @@ export default function Footer() {
           >
             v{packageJson.version}
           </a>
-          <p>{process.env.envro}</p>
+          <p>{process.env.ENVRO}</p>
         </div>
         
         {/* Center content */}
@@ -30,7 +30,7 @@ export default function Footer() {
             rel="noopener noreferrer"
             className="hover:text-huskyPurple dark:hover:text-huskyPink transition-colors"
           >
-              &copy; {new Date().getFullYear()} HuskyNZ. Licensed under the MIT open source license
+              &copy; {process.env.CURRENT_YEAR} HuskyNZ. Licensed under the MIT open source license
             </a>
           </div>
         </div>
