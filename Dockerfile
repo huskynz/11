@@ -41,6 +41,7 @@ ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=3000
 ENV NEXT_TELEMETRY_DISABLED=1
+LABEL org.opencontainers.image.description="HuskyNZ Main Site container image (Next.js)"
 
 # Enable pnpm via Corepack as root (needs /usr/local/bin write)
 RUN corepack enable && corepack prepare pnpm@10 --activate
