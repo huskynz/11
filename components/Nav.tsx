@@ -22,7 +22,7 @@ export default function Nav() {
   }, []);
 
   const navItems: NavItem[] = [
-    { name: "Home", href: "/" },
+    { name: "Home", href: "#home" },
     { name: "About", href: "#about", anchor: true },
     { name: "Contact", href: "#contact", anchor: true },
     { name: "Timeline", href: "/timeline" },
