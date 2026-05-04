@@ -101,7 +101,7 @@ export const timeline: TimelineEvent[] = [
   {
     year: "2026",
     events: [
-      "More to come...",
+      "Dive into Azure Dev ops pipelines",
     ],
     category: 'career'
   },
